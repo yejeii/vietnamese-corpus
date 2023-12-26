@@ -1,3 +1,5 @@
+# URL 크롤링.. 크롤링된 xlsx 파일 업로드 코드
+
 import pymysql
 from pymysql import MySQLError
 import os
