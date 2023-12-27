@@ -43,7 +43,7 @@ def validate_xlsx_filename(filename):
 
 def checkValues(index, row, worker_id, job_ymd):
     fill_in = False
-    datas = [str(row[i]) for i in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]]
+    datas = [str(row.iloc[i]) for i in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]]
     # print(datas)
     
     if any(data == 'nan' for data in datas):
@@ -52,7 +52,7 @@ def checkValues(index, row, worker_id, job_ymd):
         fill_in = True
         
     if fill_in:
-        if str(row[1]) == worker_id and str(row[2]) == job_ymd and len(str(row[3])) == 8:
+        if str(row.iloc[1]) == worker_id and str(row.iloc[2]) == job_ymd and len(str(row.iloc[3])) == 8:
             return True
         else:
             raise DataReadException(f"Check the worker name or work date and publication date in the {index+2} line at excel file!")
