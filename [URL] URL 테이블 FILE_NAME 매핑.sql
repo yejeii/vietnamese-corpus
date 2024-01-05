@@ -1,86 +1,56 @@
 USE vncsim;
 
--- SET @job_ymd = '20231017'
+-- SET @job_ymd = '20231029'
 
--- 1. 20231012 작업 테이블 생성, idx PK 처리 및 AI 처리하기!!
-CREATE TABLE url_excel_list_02_0912_0913
-	(SELECT * FROM vnc.load_vnc_org_lst_sim 
-	WHERE JOB_YMD IN ('20230909', '20230911', '20230912', '20230913')
-	AND DAT_SRC LIKE 'https://bientap.vbpl.vn%');	-- 1030
-	
-CREATE TABLE url_excel_list_from_20231029 LIKE url_excel_list_from_20231025;
-CREATE TABLE url_scrap_list_from_20231029 LIKE url_scrap_list_from_20231025;
-CREATE TABLE url_scrap_txt_from_20231029 LIKE url_scrap_txt_from_20231025;
+-- 1. 20231029 작업 테이블 생성, idx PK 처리 및 AI 처리하기!!	
+-- CREATE TABLE url_excel_list_from_20231029 LIKE url_excel_list_from_20231025;
+-- CREATE TABLE url_scrap_list_from_20231029 LIKE url_scrap_list_from_20231025;
+-- CREATE TABLE url_scrap_txt_from_20231029 LIKE url_scrap_txt_from_20231025;
 
 
 -- 2. 파이썬 작업 후 확인
--- DELETE FROM url_excel_list_from_20231029 ;
--- WHERE WORKER_ID = 'CW044';
-
--- ALTER TABLE vncsim.url_excel_list_from_20231029 
--- AUTO_INCREMENT=1;
-
--- SELECT *
-SELECT count(*)
-FROM url_excel_list_from_20231029 
-
+-- -- 1. url_excel_list(작업자 엑셀 파일)
+-- 날짜별, 작업자별 URL 개수 확인
 SELECT JOB_YMD, WORKER_ID, count(DAT_SRC) "URL 개수"	
 FROM vncsim.url_excel_list_from_20231029 
 -- WHERE JOB_YMD  = @job_ymd
 GROUP BY WORKER_ID, JOB_YMD
 ORDER BY JOB_YMD, WORKER_ID
 
--- -- 1. TOPIC_CD 확인
+-- TOPIC_CD 확인
 SELECT TOPIC_CD,  substring_index(DAT_SRC , '/', 3) "DAT_SRC" 
 FROM vncsim.url_excel_list_from_20231029 
 GROUP BY TOPIC_CD, substring_index(DAT_SRC , '/', 3)
 -- 03	https://kinhtemoitruong.vn
 
--- -- 2. col_pk 길이 확인
+-- col_pk 길이 확인
 SELECT length(file_name)
 FROM vncsim.url_excel_list_from_20231029 
 GROUP BY length(FILE_NAME)
 
--- -- 3. 크롤링 테이블 작업 확인
--- DELETE FROM url_scrap_list_from_20231029 ;
--- WHERE JOB_YMD = '20230918';
--- DELETE FROM url_scrap_txt_from_20231029 ;
-
-ALTER TABLE vncsim.url_scrap_list_from_20231029 
-AUTO_INCREMENT=1;
-
-ALTER TABLE vncsim.url_scrap_txt_from_20231029 
-AUTO_INCREMENT=1;
-
-SELECT *
-FROM url_scrap_list_from_20231029 ;
-
-SELECT *
-FROM url_scrap_txt_from_20231029;
-
-
+-- -- 2. 크롤링 테이블 확인
+-- 날짜별, 작업자별 URL 개수 확인
 SELECT JOB_YMD, WORKER_ID, count(DAT_SRC) "URL 개수"
-FROM vncsim.url_scrap_list_from_20231029  uslf 
+FROM vncsim.url_scrap_list_from_20231029
 -- WHERE JOB_YMD  = @job_ymd
 GROUP BY WORKER_ID, JOB_YMD
 ORDER BY JOB_YMD, WORKER_ID
 
 SELECT SCRAP_FILE_NAME, count(SCRAP_FILE_NAME)
 FROM url_scrap_list_from_20231029 
-GROUP BY SCRAP_FILE_NAME 
--- WHERE SCRAP_FILE_NAME = '20231012_CW046_1000_URL(2).xlsx'
-
+GROUP BY SCRAP_FILE_NAME;
 
 SELECT FILE_NAME,  count(DISTINCT DAT_SRC) "URL 개수"
 FROM  vncsim.url_scrap_txt_from_20231029 
 -- WHERE FILE_NAME LIKE concat('%',@job_ymd,'%')
-GROUP BY FILE_NAME -- DAT_SRC
+GROUP BY FILE_NAME
 ORDER BY FILE_NAME ASC 
 
--- -- 4. 각 테이블별 행 개수 확인
+	
+-- 3. 각 테이블별 행 개수 확인
 -- select count(*)
 SELECT COUNT(DISTINCT FILE_NAME)
-FROM url_excel_list_from_20231029 
+FROM vncsim.url_excel_list_from_20231029;
 
 -- select count(*)
 SELECT COUNT(DISTINCT dat_src)
@@ -94,31 +64,29 @@ FROM vncsim.url_scrap_txt_from_20231029
 -- WHERE FILE_NAME LIKE concat('%',@job_ymd,'%')
 
 
-
 -- 4. 중복되는 URL 확인 후 제거
 -- -- 1. 각 테이블에서 중복되는 URL 확인 후 테이블 생성, 복사
-SELECT dat_src, FILE_NAME 	-- SELECT count(*)	-- 58
+SELECT DAT_SRC, FILE_NAME 	-- SELECT count(*)	
 FROM url_excel_list_from_20231029 
 GROUP BY DAT_SRC
 HAVING count(DAT_SRC) > 1
 
-
 -- 중복 url만 모은 excel 테이블 생성
-DROP TABLE url_excel_list_from_20231029_dupli_url;
+DROP TABLE IF EXISTS url_excel_list_from_20231029_dupli_url;
 CREATE TABLE url_excel_list_from_20231029_dupli_url		
 (SELECT uslf.IDX, uslf.COL_PK, uslf.DAT_SRC, uslf.WORKER_ID, uslf.JOB_YMD, uslf.SEQ, uslf.TITLE, uslf.PUB_YMD, 	
 		RANK() over(PARTITION BY uslf.DAT_SRC ORDER BY uslf.WORKER_ID, uslf.JOB_YMD, SEQ) AS "DUPLI_RANK"	
-		-- SELECT count(*)	-- 120(중복 행 모두 포함)
+		-- SELECT count(*)	
 FROM url_excel_list_from_20231029  uslf,
-	(SELECT dat_src	
+	(SELECT DAT_SRC	
 	FROM url_excel_list_from_20231029 
 	GROUP BY DAT_SRC
 	HAVING count(DAT_SRC) > 1 ) a
-WHERE uslf.DAT_SRC = a.dat_src);
+WHERE uslf.DAT_SRC = a.DAT_SRC);
 
-
+-- 확인
 SELECT *
--- SELECT count(*)	-- 62
+-- SELECT count(*)	
 FROM url_excel_list_from_20231029_dupli_url
 WHERE DUPLI_RANK <> 1;
 
@@ -127,7 +95,7 @@ DROP TABLE IF EXISTS url_scrap_list_from_20231029_dupli_url;
 CREATE TABLE url_scrap_list_from_20231029_dupli_url
 (SELECT uslf.IDX, uelf.col_pk, uslf.SCRAP_FILE_NAME, 
 		uslf.WORKER_ID, uslf.JOB_YMD, uslf.SEQ, uslf.DAT_SRC, uslf.TITLE, uelf.DUPLI_RANK  	
-		-- SELECT count(*)	-- 66
+		-- SELECT count(*)	
 FROM url_scrap_list_from_20231029 uslf 
 INNER JOIN url_excel_list_from_20231029_dupli_url uelf 
 ON uslf.DAT_SRC = uelf.DAT_SRC 
