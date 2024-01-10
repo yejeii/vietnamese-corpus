@@ -13,50 +13,8 @@ def count_word(text_column):
         total_word_count += len(text.split())  # 공백을 기준으로 단어 분할
     return total_word_count
 
-# root_path = 'Y:/20230906/Crawling/'
-# root_path = 'Y:/20230907/Crawling/'
-# root_path = 'Y:/20230908/Crawling/'
-# root_path = 'Y:/20230911/Crawling/'
-# root_path = 'Y:/20230912/Crawling/'
-# root_path = 'Y:/20230913/Crawling/'
-# root_path = 'Y:/20230914/Crawling/'
-# root_path = 'Y:/20230918/Crawling'
-# root_path = 'Y:/20230919/Crawling/'
-# root_path = 'Y:/20230920/Crawling/'
-# root_path = 'Y:/20230921/Crawling/'
-# root_path = 'Y:/20230922/Crawling/'
-# root_path = 'Y:/20230925/Crawling/'
-# root_path = 'Y:/20230926/Crawling/'
-# root_path = 'Y:/20230927/Crawling/'
-# root_path = 'Y:/20231012/Crawling/CW047/'
-# root_path = 'Y:/20231013/Crawling/truyen.tangthuvien.vn/'
-# root_path = 'Y:/20231013/Crawling/thichtruyen.vn/url_excel_list_from_20231013_2/'
-# root_path = 'Y:/20231016/Crawling/url_excel_list_from_20231016_1/'
-# root_path = 'Y:/20231016/Crawling/url_excel_list_from_20231016_2/'
-# root_path = 'Y:/20230913/Crawling/'
-# root_path = 'Y:/20231017/Crawling/07/'
-# root_path = 'Y:/20231019/crawling/07/'
-# root_path = 'Y:/20231020/Crawling/07/'
-# root_path = 'Y:/20231018/crawling/07/'
-# root_path = 'Y:/20231023/Crawling/07/'
-# root_path = 'Y:/20231018/crawling/03/'
-# root_path = 'Y:/20231020/Crawling/03/'
-# root_path = 'Y:/20231024/Crawling/06/'
-# root_path = 'Y:/20231025/crawling/02/'
-# root_path = 'Y:/20231025/crawling/03/'
-# root_path = 'Y:/20231025/crawling/06/'
-# root_path = 'Y:/20231026/Crawling/03/'
-# root_path = 'Y:/20231026/Crawling/06/'
-# root_path = 'Y:/20231026/Crawling/03/20231026_2'
-# root_path = 'Y:/20231016/Crawling/url_excel_list_from_20231016_3/'
-# root_path = f'Y:\\20231024\\Crawling\\02/'
-# root_path = f'Y:\\20231024\\Crawling\\03/'
-# root_path = f'Y:\\20231027\\crawling\\02/'
-# root_path = f'Y:\\20231027\\crawling\\03/'
-# root_path = f'Y:\\20231027\\crawling\\07/'
-# root_path = f'Y:\\20231028/crawling/'    # 07
+# 경로
 root_path = f'Y:\\20231029/crawling/'    # 07
-
 
 # 구어체 PUB_DATE
 # PUB_DATE = '20230913'
@@ -67,13 +25,10 @@ anh_arr = []
 # 문자열 "(nguồn:"을 저장할 배열
 nguồn_arr = []
 
-
 crawling_xlsx_list = os.listdir(root_path)
 crawling_xlsx_list = [file for file in crawling_xlsx_list if not file.startswith('~$') and file != '.DS_Store' and file.endswith('.xlsx')]
 
-# xlsx_name = '20231026_CW047_738_URL.xlsx'
 for xlsx_name in crawling_xlsx_list:
-# if True:
     
     xlsx_path = os.path.join(root_path, xlsx_name)
 
@@ -192,58 +147,12 @@ for xlsx_name in crawling_xlsx_list:
                             txt = txt.strip()   # 앞 뒤 공백 제거
                             
                             # print(f"{scrap_seq} : {txt} \n")
-                            
-                            # anh 처리
-                            # if "Ảnh:" in txt or "(Ảnh:" in txt:
-                            #     anh_arr.append(txt)
-                                
-                            # # nguồn 처리
-                            # if "(nguồn:" in txt:
-                            #     nguồn_arr.append(txt)
-                            
                             scrap_txt_bulk_insert_data.append((SCRAP_FILE_NAME,
                                                                 scrap_dat_src,
                                                                 TITLE,
                                                                 scrap_seq,
                                                                 txt))
                             scrap_seq += 1
-
-                            
-                            # 너무 잘게 잘라지는걸 방지   
-                            # if append_to_txt and len(add_txt) > 1:
-                            #     add_txt += txt
-                            #     # print(f"합쳐진 txt : {add_txt} \n")
-                            #     txt_limit_300.append(add_txt)
-                            #     add_txt = ''
-                            #     append_to_arr = True
-                            #     append_to_txt = False
-                            # else:
-                            #     if len(txt) < 200:
-                            #         add_txt += txt
-                            #         # print(f"txt 길이가 너무 짧아요 : {add_txt} \n")
-                            #         append_to_arr = False
-                            #         append_to_txt = True
-                            #         # print(f"add_txt : {add_txt}")
-                            #         # print()
-
-                            #         # if add_txt:
-                            #         #     txt_limit_300.append(add_txt)
-                            #         #     add_txt = ''
-                            #     else:
-                            #         # print(f"긴 txt : {txt} \n")
-                            #         txt_limit_300.append(txt)
-                            #         append_to_arr = True
-                            #         append_to_txt = False
-                            
-                        
-                        # for i, sentence in enumerate(txt_limit_300):     
-                        #     print(f"{i+1} : {sentence} \n") 
-                        #     # 데이터 삽입
-                        #     scrap_txt_bulk_insert_data.append((SCRAP_FILE_NAME,
-                        #                                         scrap_dat_src,
-                        #                                         TITLE,
-                        #                                         i+1,
-                        #                                         sentence))
                     # print(scrap_txt_bulk_insert_data)
                 
         # read_data = False
