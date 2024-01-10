@@ -14,7 +14,7 @@ def count_word(text_column):
     return total_word_count
 
 # 경로
-root_path = f'Y:\\20231029/crawling/'    # 07
+root_path = r'D:\YJ\20230920\Crawling' 
 
 crawling_xlsx_list = os.listdir(root_path)
 crawling_xlsx_list = [file for file in crawling_xlsx_list if not file.startswith('~$') and file != '.DS_Store' and file.endswith('.xlsx')]
@@ -42,8 +42,8 @@ for xlsx_name in crawling_xlsx_list:
     #print(f'{file_create_time}, {file_modi_time}')
 
     # 테이블
-    scrap_list_tb = 'url_scrap_list_from_20231029'   
-    scrap_txt_tb = 'url_scrap_txt_from_20231029'
+    scrap_list_tb = 'url_scrap_list_from_20230920'   
+    scrap_txt_tb = 'url_scrap_txt_from_20230920'
 
     # 엑셀에서 데이터 GET
     chunk_size = 300  # 원하는 청크 크기
@@ -57,7 +57,6 @@ for xlsx_name in crawling_xlsx_list:
 
     try:
         print(f"{xlsx_name} 읽기 시작")
-        # print(f"{SCRAP_FILE_NAME} 읽기 시작")
         df = pd.read_excel(xlsx_path, engine='openpyxl')
         datas.append(df)
 
@@ -65,7 +64,7 @@ for xlsx_name in crawling_xlsx_list:
             for index, row in data.iterrows():
                 
                 # URL이 있다면 값을 가져옴
-                if str(row.iloc[0]).startwith('http'):
+                if str(row.iloc[0]).startswith('http'):
                     read_flag = True
                     
                 if read_flag:
@@ -93,26 +92,20 @@ for xlsx_name in crawling_xlsx_list:
                                                         PUB_DATE,
                                                         WORD_CNT))
                     
-                    # txt 잘라서 url_scrap_txt_from_20230920에 넣기
+                    # txt 잘라서 url_scrap_txt에 넣기
                     # dat_txt = str(row[3]).replace("'", "''")
                     DAT_TXT = DAT_TXT.strip()                   # strip() : 앞뒤 공백 제거
                     DAT_TXT = DAT_TXT.replace("\u00A0", " ")    # strip()이 걸러내지 못하는 &nbsp 제거
                     DAT_TXT = DAT_TXT.replace("\uFEFF", " ")    # HTML 코드(&#65279;) 제거
                     DAT_TXT = DAT_TXT.replace('\t', ' ')
                     DAT_TXT = DAT_TXT.replace('\xa0', ' ')
-                    # DAT_TXT = DAT_TXT.replace('\n', ' ')
-                    # DAT_TXT = DAT_TXT.strip()
                     
-                    # dat_txt = DAT_TXT.split('. ')
-                    # dat_txt = DAT_TXT.split('  ')
-                    dat_txt = DAT_TXT.split('\n')
+                    # dat_txt = DAT_TXT.split('\n')     # 가장 기본
+                    dat_txt = DAT_TXT.split('. ')       # '. '단위로 자를경우 아래에서 '. '붙이는 코드 주석 해제해야함!
                     dat_txt = [txts for txts in dat_txt if not txts == '' ]           # 빈공백으로만 있는 텍스트 제거
                     dat_txt = [txts for txts in dat_txt if not txts.strip() == '' ]   # 앞뒤 공백 자른 txts가 ''인 것 제거
                     # dat_txt = [txts for txts in dat_txt if not txts.strip() == 'Ảnh minh họa. Nguồn: MPI' ]   # txts가 'Ảnh minh họa. Nguồn: MPI'인 것 제거
                     # dat_txt = [txts for txts in dat_txt if not txts.strip() == 'Ảnh minh họa' ]   # txts가 'Ảnh minh họa'인 것 제거
-                    
-                    # 법률 문서의 경우
-                    # dat_txt = dat_txt.split('\n\n\t')
 
                     if dat_txt:
 
@@ -120,10 +113,8 @@ for xlsx_name in crawling_xlsx_list:
                         scrap_dat_src = DAT_SRC
                         scrap_seq = 1
                         
-                        for txt in dat_txt:       # 일반적인 경우
-                        # for txt in dat_txt[:-1]:
-                        # for txt in dat_txt[18:-4]:  # 05번의 경우(확인 필수)
-                            # txt = txt + '. '
+                        for txt in dat_txt:     # 일반적인 경우
+                            txt = txt + '.'     # '. ' 단위로 자른경우 무조건 주석 해제!!
                             txt = txt.strip()   # 앞 뒤 공백 제거
                             
                             # print(f"{scrap_seq} : {txt} \n")
@@ -167,8 +158,6 @@ for xlsx_name in crawling_xlsx_list:
                     sql = sql + f" INSERT INTO {scrap_list_tb} "
                     sql = sql + " (SCRAP_FILE_NAME, WORKER_ID, JOB_YMD, SEQ, DAT_SRC, TITLE, DAT_TXT, PUB_DATE, WORD_CNT) "
                     sql = sql + " VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
-                    #print(f'{bulk_insert_datas}')
-                    #print()
                     cursor.executemany(sql, batch)
                     connection.commit()
                     print(f'{len(batch)}개 저장완료')
@@ -182,8 +171,6 @@ for xlsx_name in crawling_xlsx_list:
                     sql = sql + f" INSERT INTO {scrap_txt_tb} "
                     sql = sql + " (FILE_NAME, DAT_SRC, TITLE, SEQ, DAT_TXT) "
                     sql = sql + " VALUES (%s, %s, %s, %s, %s)"
-                    #print(f'{bulk_insert_datas}')
-                    #print()
                     cursor.executemany(sql, batch)
                     connection.commit()
                     print(f'{len(batch)}개 저장완료')    
