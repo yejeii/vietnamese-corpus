@@ -16,15 +16,6 @@ def count_word(text_column):
 # 경로
 root_path = f'Y:\\20231029/crawling/'    # 07
 
-# 구어체 PUB_DATE
-# PUB_DATE = '20230913'
-
-# 문자열 "anh:" 을 저장할 배열
-anh_arr = []
-
-# 문자열 "(nguồn:"을 저장할 배열
-nguồn_arr = []
-
 crawling_xlsx_list = os.listdir(root_path)
 crawling_xlsx_list = [file for file in crawling_xlsx_list if not file.startswith('~$') and file != '.DS_Store' and file.endswith('.xlsx')]
 
@@ -50,7 +41,6 @@ for xlsx_name in crawling_xlsx_list:
 
     #print(f'{file_create_time}, {file_modi_time}')
 
-
     # 테이블
     scrap_list_tb = 'url_scrap_list_from_20231029'   
     scrap_txt_tb = 'url_scrap_txt_from_20231029'
@@ -73,13 +63,9 @@ for xlsx_name in crawling_xlsx_list:
 
         for data in datas:
             for index, row in data.iterrows():
-                # print(f'{index} : {row}')
-                
-                # URL 출력
-                #print('row[0]',row[0]) 
                 
                 # URL이 있다면 값을 가져옴
-                if str(row.iloc[0]):
+                if str(row.iloc[0]).startwith('http'):
                     read_flag = True
                     
                 if read_flag:
@@ -88,8 +74,8 @@ for xlsx_name in crawling_xlsx_list:
                     TITLE = str(row.iloc[1]).replace("'", "''")
                     PUB_DATE = str(row.iloc[2]).strip()
                     DAT_TXT = str(row.iloc[3]).replace("'", "''")
-                    # WORD_CNT = count_word(str(row.iloc[3]))
-                    WORD_CNT = int(str(row.iloc[4]).strip())
+                    WORD_CNT = count_word(str(row.iloc[3]))
+                    # WORD_CNT = int(str(row.iloc[4]).strip())
                     
                     #print(f'{SEQ}번 {URL} -----')
                     #print(f'{URL_TITLE}, {URL_PUB_YMD}')
@@ -129,13 +115,7 @@ for xlsx_name in crawling_xlsx_list:
                     # dat_txt = dat_txt.split('\n\n\t')
 
                     if dat_txt:
-                        
-                        txt_limit_300 = []
-                        add_txt = ''
-                        append_to_txt = False
-                        append_to_arr = False
-                        pass_under_if = False
-                        
+
                         # url_scrap_txt 테이블 컬럼 변수 초기화
                         scrap_dat_src = DAT_SRC
                         scrap_seq = 1
@@ -153,7 +133,6 @@ for xlsx_name in crawling_xlsx_list:
                                                                 scrap_seq,
                                                                 txt))
                             scrap_seq += 1
-                    # print(scrap_txt_bulk_insert_data)
                 
         # read_data = False
         read_data = True
