@@ -10,15 +10,17 @@ from pymysql import MySQLError
 
 ####################################################################################################################
 # MySQL 연결 정보
-mysql_host = '172.30.1.36'
-mysql_port = 13333
+# mysql_host = '172.30.1.36'
+# mysql_port = 13333
+mysql_host = 'localhost'
+mysql_port = 3307
 mysql_user = 'vnc'
 mysql_password = 'vnc'
 mysql_database = 'vncsim'
 db = pymysql.connect(host=mysql_host,port=mysql_port,user=mysql_user,passwd=mysql_password,db=mysql_database)
 #####################################################################################################################
 
-root_path = 'Y:/'
+root_path = r'D:/YJ/'
 JOB_YMD = '20230905'
 WORKER_ID = ''
 
@@ -57,10 +59,8 @@ def count_words_docx(file_path):
     return total_words
 
 def create_table(db, cursor):
-    try:    
-        query = 'savepoint a'
-        cursor.execute(query)
-        
+    # DDL - auto commit. db.commit() X
+    try:         
         create_query = f'CREATE TABLE IF NOT EXISTS {excel_tb} LIKE vnc.load_vnc_org_lst_sim;'
         cursor.execute(create_query)    # 쿼리 실행
 
@@ -70,30 +70,26 @@ def create_table(db, cursor):
         create_query = f'CREATE TABLE IF NOT EXISTS {docx_tb} LIKE vnc.load_vnc_file_docx_sim;'
         cursor.execute(create_query)
     
+        # create_idx_q = f'CREATE INDEX IF NOT EXISTS {docx_tb}_FILE_TXT_IDX USING BTREE ON {docx_tb} (FILE_TXT);'
+        # cursor.execute(create_idx_q)    # 쿼리 실행
         # db.commit() # 변경사항 DB에 반영
-        
-        create_idx_q = f'CREATE INDEX IF NOT EXISTS {docx_tb}_FILE_TXT_IDX USING BTREE ON {docx_tb} (FILE_TXT);'
-        cursor.execute(create_idx_q)    # 쿼리 실행
-        db.commit() # 변경사항 DB에 반영
         
         print("Create succeeded.")
         CREATE_TABLE = True
         
     except Exception as e:
         print(f"Error at creating tables : {e}")
-        # sql = ''
-        # sql += f'DROP TABLE IF EXISTS {excel_tb};'
-        # cursor.execute(sql)
+        sql = ''
+        sql += f'DROP TABLE IF EXISTS {excel_tb};'
+        cursor.execute(sql)
         
-        # sql = f'DROP TABLE IF EXISTS {file_tb};'
-        # cursor.execute(sql)
+        sql = f'DROP TABLE IF EXISTS {file_tb};'
+        cursor.execute(sql)
         
-        # sql = f'DROP TABLE IF EXISTS {docx_tb};'
-        # cursor.execute(sql)
-        
-        query = 'rollback to a'
-        cursor.execute(create_query)
-        db.commit()
+        sql = f'DROP TABLE IF EXISTS {docx_tb};'
+        cursor.execute(sql)
+
+        # db.commit()
 
     finally:
         return CREATE_TABLE
@@ -129,7 +125,6 @@ try:
             WORK_CNT = len(files) - 1    # docx 파일 개수
             
             
-                
             # 데이터 담는 배열변수
             excel_bulk_insert_datas = []
             file_bulk_insert_datas = []
