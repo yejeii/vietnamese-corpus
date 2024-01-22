@@ -10,10 +10,8 @@ from pymysql import MySQLError
 
 ####################################################################################################################
 # MySQL 연결 정보
-# mysql_host = '172.30.1.36'
-# mysql_port = 13333
-mysql_host = 'localhost'
-mysql_port = 3307
+mysql_host = '172.30.1.36'
+mysql_port = 13333
 mysql_user = 'vnc'
 mysql_password = 'vnc'
 mysql_database = 'vncsim'

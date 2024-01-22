@@ -42,7 +42,6 @@ def check_prev_file(pre_job_ymd, pre_worker_id, pre_topic_cd, job_ymd, worker_id
         return True
     
     
-
 # MySQL 연결 정보
 mysql_host = '172.30.1.36'
 mysql_port = 13333
@@ -54,87 +53,10 @@ db = pymysql.connect(host=mysql_host,port=mysql_port,user=mysql_user,passwd=mysq
 try:
     cursor = db.cursor(pymysql.cursors.DictCursor)
     print("Connected to MySQL database \n\n")
-        
-    #root_path = 'C:/YJ/copy/20230828/'
-    #root_path = 'C:/YJ/copy/20230829/'
-    #root_path = 'C:/YJ/copy/20230830/'
-    #root_path = 'C:/YJ/copy/20230831/'
-    #root_path = 'C:/YJ/copy/20230901/'
-    #root_path = 'C:/YJ/copy/20230904/'
-    #root_path = 'X:/20230905/'
-    # root_path = 'Z:/CW040/'
-    # root_path = 'Z:/CW044/'
-    # root_path = 'Z:/CW045/'
-    # root_path = 'Z:/CW046/'
-    # root_path = 'Z:/CW047/'
     
-    # root_path = 'Y:/20230906/'
-    # root_path = 'Y:/20230907/'
-    # root_path = 'Y:/20230908/'
-    # root_path = 'Y:/20230911/'
-    # root_path = 'Y:/20230912/'
-    # root_path = 'Y:/20230913/'
-    # root_path = 'Y:/20230914/'
-    # root_path = 'Y:/20230918/'
-    # root_path = 'Y:/20230919/'
-    # root_path = 'Y:/20230920/'
-    # root_path = 'Y:/20230921/'
-    # root_path = 'Y:/20230922/'
-    # root_path = 'Y:/20230925/'
-    # root_path = 'Y:/20230926/'
-    # root_path = 'Y:/20230927/'
-    # root_path = 'Y:/20231012/CW047/'
-    # root_path = 'Y:/20231013/truyen.tangthuvien.vn/'
-    # root_path = 'Y:/20231013/thichtruyen.vn/url_excel_list_from_20231013_2/'
-    # root_path = 'Y:/20231016/url_excel_list_from_20231016_1/'
-    # root_path = 'Y:/20231016/url_excel_list_from_20231016_2/'
-    # root_path = 'Y:/20230913/'
-    # root_path = 'Y:/20231017/07/'
-    # root_path = 'Y:/20231018/03/'
-    # root_path = 'Y:/20231020/03/'
-    # root_path = 'Y:/20231019/07/'
-    # root_path = 'Y:/20231020/07/'
-    # root_path = 'Y:/20231018/07/'
-    # root_path = 'Y:/20231023/07/'
-    # root_path = 'Y:/20231024/06/'
-    # root_path = 'Y:/20231025/06/'
-    # root_path = 'Y:/20231026/02/'
-    # root_path = 'Y:/20231026/03/20231026_1'
-    # root_path = 'Y:/20231026/06/'
-    # root_path = 'Y:/20231026/03/20231026_2'
-    # root_path = 'Y:/20231016/url_excel_list_from_20231016_3/'
-    # root_path = f'Y:\\20231024\\02/'
-    # root_path = f'Y:\\20231024\\03/'
-    # root_path = f'Y:\\20231027\\02/'
-    # root_path = f'Y:\\20231027\\03/'
-    # root_path = f'Y:\\20231027\\07/'
-    # root_path = f'Y:\\20231028/'    # 07
-    root_path = f'Y:\\20231029/'    # 07
+    root_path = 'Y:/20230920/'
     
-    
-    
-    # root_path = 'Y:/법률문서/'
-    # root_path = 'Y:/크롤링 수정/'
-    
-    # excel_tb = 'url_excel_list_from_20230922'
-    # excel_tb = 'url_excel_list_from_20230926'
-    # excel_tb = 'url_excel_list_from_20230927'
-    # excel_tb = 'url_excel_list_from_20231013'
-    # excel_tb = 'url_excel_list_from_20231013_2'
-    # excel_tb = 'url_excel_list_from_20231016_1'
-    # excel_tb = 'url_excel_list_from_20231016_2'
-    # excel_tb = 'url_excel_list_02_0912_0913'
-    # excel_tb = 'url_excel_list_from_20231017'
-    # excel_tb = 'url_excel_list_from_20231018_03'      # 20231018부터의 모든 03번 파일
-    # excel_tb = 'url_excel_list_from_20231019_07'      # 20231019, 20231020의 모든 07번 파일
-    # excel_tb = 'url_excel_list_from_20231018_07'      # 20231018, 20231023의 모든 07번 파일
-    # excel_tb = 'url_excel_list_from_20231024'         # 20231024의 모든 파일
-    # excel_tb = 'url_excel_list_from_20231025'         # 20231024_CW044_1600 및 20231025의 모든 파일
-    # excel_tb = 'url_excel_list_from_20231026_1'       # 20231026일자 모든 파일
-    # excel_tb = 'url_excel_list_from_20231026_2'       # url_excel_list_from_20231026_1에 인서트 안한 20231026일자 03 남은 파일
-    # excel_tb = 'url_excel_list_from_20231016_3'       # url_excel_list_from_20231016_1, 2에 인서트 안한 20231016일자 05 남은 파일
-    excel_tb = 'url_excel_list_from_20231029'        # 1024일자 02, 03 // 
-    
+    excel_tb = 'url_excel_list_from_20230920'      
     
     ###################################################################################################################################3
     
